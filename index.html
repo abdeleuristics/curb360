@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Curb360">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#ffffff">
 <title>Curb360 — Photographer</title>
 
 <!-- PWA Manifest inline -->
@@ -20,16 +20,16 @@
 
   :root {
     --red: #FA4D5B;
-    --red-dim: rgba(250,77,91,0.15);
-    --bg: #000;
-    --surface: #111;
-    --surface2: #1a1a1a;
-    --border: #222;
-    --text: #fff;
+    --red-dim: rgba(250,77,91,0.12);
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --surface2: #f0f0f0;
+    --border: #e0e0e0;
+    --text: #111;
     --text-muted: #888;
-    --green: #22c55e;
-    --amber: #f59e0b;
-    --blue: #3b82f6;
+    --green: #16a34a;
+    --amber: #d97706;
+    --blue: #2563eb;
   }
 
   body {
@@ -60,10 +60,10 @@
   .topbar {
     position: sticky;
     top: 0;
-    background: rgba(0,0,0,0.85);
+    background: rgba(255,255,255,0.9);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    padding: env(safe-area-inset-top, 44px) 20px 14px;
+    padding: env(safe-area-inset-top, 44px) 20px 18px;
     z-index: 50;
     display: flex;
     align-items: center;
@@ -78,8 +78,8 @@
   }
 
   .logo-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
   }
 
   .topbar h1 {
@@ -124,7 +124,7 @@
     position: fixed;
     bottom: 0;
     left: 0; right: 0;
-    background: rgba(10,10,10,0.95);
+    background: rgba(255,255,255,0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid var(--border);
@@ -240,7 +240,7 @@
     top: 100px;
     left: 50%;
     transform: translateX(-50%) translateY(-20px);
-    background: #1a1a1a;
+    background: #111;
     border: 1px solid #333;
     color: white;
     padding: 12px 20px;
@@ -319,7 +319,7 @@
 
   /* ── JOB DETAIL ── */
   .detail-hero {
-    background: linear-gradient(135deg, #111 0%, #1a0a0b 100%);
+    background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
     padding: 20px 20px 24px;
     border-bottom: 1px solid var(--border);
   }
@@ -418,7 +418,7 @@
 
   .tracking-card {
     margin: 0 16px 12px;
-    background: linear-gradient(135deg, #1a0a0b, #0f0a00);
+    background: linear-gradient(135deg, #fff5f5, #fff);
     border: 1px solid rgba(250,77,91,0.3);
     border-radius: 16px;
     padding: 16px;
@@ -591,14 +591,14 @@
   <div class="topbar">
     <div class="topbar-logo">
       <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="40" height="40" rx="10" fill="#000"/>
+        <rect width="40" height="40" rx="10" fill="#FA4D5B"/>
         <path d="M8 15.5C8 14.4 8.9 13.5 10 13.5H14L16 10.5H24L26 13.5H30C31.1 13.5 32 14.4 32 15.5V28.5C32 29.6 31.1 30.5 30 30.5H10C8.9 30.5 8 29.6 8 28.5V15.5Z" stroke="white" stroke-width="1.8" fill="none"/>
         <path d="M20 25.5C22.8 25.5 25 23.3 25 20.5C25 17.7 22.8 15.5 20 15.5C17.2 15.5 15 17.7 15 20.5C15 23.3 17.2 25.5 20 25.5Z" stroke="white" stroke-width="1.8" fill="none"/>
         <path d="M17 20.5C17 18.8 18.3 17.5 20 17.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
       <div>
-        <div style="font-size:10px;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase">CURB360</div>
-        <div style="font-size:15px;font-weight:800;line-height:1;margin-top:1px">Photographer</div>
+        <div style="font-size:11px;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase">CURB360</div>
+        <div style="font-size:17px;font-weight:800;line-height:1;margin-top:2px">Photographer</div>
       </div>
     </div>
     <div class="topbar-right">
@@ -644,7 +644,7 @@
     <a onclick="showScreen('jobs')">See all →</a>
   </div>
 
-  <div class="card" style="border-color:rgba(250,77,91,0.4);background:linear-gradient(135deg,#1a0a0b,#111);" onclick="showJobDetail()">
+  <div class="card" style="border-color:rgba(250,77,91,0.4);background:linear-gradient(135deg,#fff0f1,#fff5f5);" onclick="showJobDetail()">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
       <div>
         <div style="font-size:18px;font-weight:800;">9:00 AM</div>
@@ -1083,11 +1083,11 @@
       <div class="odo-sub" id="trackingStatus">● Tracking active · Auto-started at 8:05 AM</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
-      <div style="text-align:center;background:#0a0a0a;padding:12px;border-radius:10px;">
+      <div style="text-align:center;background:#f5f5f7;padding:12px;border-radius:10px;">
         <div style="font-size:11px;color:var(--text-muted);">Driving Time</div>
         <div style="font-size:20px;font-weight:800;margin-top:2px;">1h 12m</div>
       </div>
-      <div style="text-align:center;background:#0a0a0a;padding:12px;border-radius:10px;">
+      <div style="text-align:center;background:#f5f5f7;padding:12px;border-radius:10px;">
         <div style="font-size:11px;color:var(--text-muted);">Est. Reimbursement</div>
         <div style="font-size:20px;font-weight:800;color:var(--green);margin-top:2px;">$7.38</div>
       </div>
