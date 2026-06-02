@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Curb360">
+<meta name="theme-color" content="#000000">
+<title>Curb360 — Photographer</title>
+
+<!-- PWA Manifest inline -->
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Curb360%20Photographer%22%2C%22short_name%22%3A%22Curb360%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23000000%22%2C%22theme_color%22%3A%22%23FA4D5B%22%2C%22start_url%22%3A%22.%22%7D">
+
+<!-- Apple Touch Icon as inline SVG converted -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23000'/%3E%3Cg fill='white' transform='translate(25,18)'%3E%3Cpath d='M65 15 L85 15 L90 25 L115 25 Q120 25 120 30 L120 80 Q120 85 115 85 L15 85 Q10 85 10 80 L10 30 Q10 25 15 25 L40 25 Z' stroke='white' stroke-width='2' fill='none'/%3E%3Ccircle cx='65' cy='55' r='18' stroke='white' stroke-width='3' fill='none'/%3E%3Cpath d='M50 42 L50 34 Q50 30 55 30 L62 30' stroke='white' stroke-width='2' fill='none'/%3E%3Cpath d='M48 55 Q48 40 65 40 Q72 40 77 45 L68 45 Q65 43 62 43 L58 43 Q52 43 52 50 L52 60 Q52 67 59 67 L71 67 Q78 67 78 60 L78 56' stroke='white' stroke-width='2' fill='none'/%3E%3Ctext x='65' y='115' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='18' fill='white'%3ECURB360%3C/text%3E%3C/g%3E%3C/svg%3E">
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --red: #FA4D5B;
+    --red-dim: rgba(250,77,91,0.15);
+    --bg: #000;
+    --surface: #111;
+    --surface2: #1a1a1a;
+    --border: #222;
+    --text: #fff;
+    --text-muted: #888;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --blue: #3b82f6;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    min-height: 100vh;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    padding-bottom: 80px;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen.active { display: block; opacity: 1; }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: env(safe-area-inset-top, 44px) 20px 14px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .topbar h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    z-index: 100;
+  }
+
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 10px 0 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .nav-item svg { transition: all 0.2s; }
+  .nav-item span {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-item.active span { color: var(--red); }
+  .nav-item.active svg { stroke: var(--red); }
+
+  .nav-badge {
+    position: absolute;
+    top: 6px;
+    right: calc(50% - 16px);
+    background: var(--red);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 16px 12px;
+  }
+
+  .card-sm {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px 8px;
+  }
+  .section-header h2 { font-size: 16px; font-weight: 700; }
+  .section-header a { color: var(--red); font-size: 13px; font-weight: 600; cursor: pointer; }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge-red { background: var(--red-dim); color: var(--red); }
+  .badge-amber { background: rgba(245,158,11,0.15); color: var(--amber); }
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--blue); }
+  .badge-gray { background: #222; color: var(--text-muted); }
+
+  /* ── BUTTON ── */
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100%;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--red); color: white; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-outline { background: transparent; color: var(--red); border: 1.5px solid var(--red); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 999;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 0;
+  }
+
+  /* ── STAT GRID ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 16px 4px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-value { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+  .stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .stat-red { color: var(--red); }
+  .stat-green { color: var(--green); }
+
+  /* ── JOB ROW ── */
+  .job-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .job-row:active { background: var(--surface2); }
+  .job-row:last-child { border-bottom: none; }
+
+  .job-time-block {
+    text-align: center;
+    min-width: 44px;
+  }
+  .job-time { font-size: 13px; font-weight: 700; }
+  .job-ampm { font-size: 10px; color: var(--text-muted); }
+
+  .job-info { flex: 1; min-width: 0; }
+  .job-address { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .job-services { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .job-arrow {
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* ── JOB DETAIL ── */
+  .detail-hero {
+    background: linear-gradient(135deg, #111 0%, #1a0a0b 100%);
+    padding: 20px 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--red);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+
+  .detail-address { font-size: 20px; font-weight: 800; line-height: 1.2; margin-bottom: 6px; }
+  .detail-meta { font-size: 13px; color: var(--text-muted); }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--red-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .info-label { font-size: 11px; color: var(--text-muted); }
+  .info-value { font-size: 14px; font-weight: 600; margin-top: 1px; }
+
+  /* ── STATUS STEPPER ── */
+  .stepper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 10px 0;
+    position: relative;
+  }
+  .step-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    position: relative;
+    z-index: 1;
+  }
+  .step-dot.done { background: var(--green); }
+  .step-dot.active { background: var(--red); animation: pulse-step 1.5s infinite; }
+  .step-dot.pending { background: var(--border); }
+
+  @keyframes pulse-step {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(250,77,91,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(250,77,91,0); }
+  }
+
+  .step-line {
+    position: absolute;
+    left: 11px;
+    top: 34px;
+    width: 2px;
+    height: calc(100% - 10px);
+    background: var(--border);
+  }
+  .step-line.done { background: var(--green); }
+
+  .step-text { flex: 1; }
+  .step-title { font-size: 14px; font-weight: 600; }
+  .step-time { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  /* ── MILEAGE ── */
+  .odometer {
+    text-align: center;
+    padding: 30px 20px 20px;
+  }
+  .odo-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
+  .odo-value {
+    font-size: 64px;
+    font-weight: 900;
+    letter-spacing: -3px;
+    color: var(--red);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .odo-unit { font-size: 20px; font-weight: 600; color: var(--text-muted); letter-spacing: 0; }
+  .odo-sub { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+
+  .tracking-card {
+    margin: 0 16px 12px;
+    background: linear-gradient(135deg, #1a0a0b, #0f0a00);
+    border: 1px solid rgba(250,77,91,0.3);
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  .tracking-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .tracking-title { font-size: 14px; font-weight: 700; }
+  .live-badge {
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: white; animation: pulse-dot 1s infinite; }
+
+  /* ── ROUTE ── */
+  .map-placeholder {
+    margin: 0 16px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .map-svg { width: 100%; height: 100%; }
+
+  .route-stop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .route-stop:active { background: var(--surface2); }
+  .route-stop:last-child { border-bottom: none; }
+
+  .stop-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .stop-num.current { background: var(--red); color: white; }
+  .stop-num.done { background: var(--green); color: white; }
+  .stop-num.upcoming { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+
+  .stop-info { flex: 1; min-width: 0; }
+  .stop-address { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stop-time { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .stop-dist { font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+
+  /* ── INVOICE ── */
+  .invoice-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .invoice-row:active { background: var(--surface2); }
+  .invoice-row:last-child { border-bottom: none; }
+  .invoice-left {}
+  .invoice-id { font-size: 12px; color: var(--text-muted); margin-bottom: 2px; }
+  .invoice-desc { font-size: 14px; font-weight: 600; }
+  .invoice-date { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .invoice-right { text-align: right; }
+  .invoice-amount { font-size: 18px; font-weight: 800; }
+  .invoice-amount.green { color: var(--green); }
+
+  /* ── SWITCH ── */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-label { font-size: 14px; font-weight: 600; }
+  .toggle-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .toggle {
+    width: 48px;
+    height: 28px;
+    border-radius: 14px;
+    background: var(--border);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+  .toggle.on { background: var(--red); }
+  .toggle-thumb {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: white;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .toggle.on .toggle-thumb { transform: translateX(20px); }
+
+  /* ── NOTIFICATION DOT ── */
+  .notif-card {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .notif-card:last-child { border-bottom: none; }
+  .notif-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .notif-text { flex: 1; }
+  .notif-title { font-size: 14px; font-weight: 600; }
+  .notif-body { font-size: 13px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+  .notif-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ── EARNINGS BAR ── */
+  .earnings-bar-wrap { padding: 4px 0 12px; }
+  .earnings-bar-bg { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .earnings-bar-fill { height: 100%; background: var(--red); border-radius: 4px; transition: width 1s ease; }
+  .earnings-bar-labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--text-muted); }
+
+  /* ── PROFILE ── */
+  .profile-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .profile-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .profile-name { font-size: 22px; font-weight: 800; }
+  .profile-role { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .profile-zones { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+
+</style>
+</head>
+<body>
+
+<!-- ════════ SCREEN: DASHBOARD ════════ -->
+<div class="screen active" id="screen-home">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#000"/>
+        <path d="M8 15.5C8 14.4 8.9 13.5 10 13.5H14L16 10.5H24L26 13.5H30C31.1 13.5 32 14.4 32 15.5V28.5C32 29.6 31.1 30.5 30 30.5H10C8.9 30.5 8 29.6 8 28.5V15.5Z" stroke="white" stroke-width="1.8" fill="none"/>
+        <path d="M20 25.5C22.8 25.5 25 23.3 25 20.5C25 17.7 22.8 15.5 20 15.5C17.2 15.5 15 17.7 15 20.5C15 23.3 17.2 25.5 20 25.5Z" stroke="white" stroke-width="1.8" fill="none"/>
+        <path d="M17 20.5C17 18.8 18.3 17.5 20 17.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div style="font-size:10px;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase">CURB360</div>
+        <div style="font-size:15px;font-weight:800;line-height:1;margin-top:1px">Photographer</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="status-dot"></div>
+      <div class="avatar">JV</div>
+    </div>
+  </div>
+
+  <div style="padding:18px 20px 0;">
+    <div style="font-size:13px;color:var(--text-muted);">Good morning,</div>
+    <div style="font-size:26px;font-weight:900;letter-spacing:-0.5px;margin-top:2px;">Javier 👋</div>
+  </div>
+
+  <!-- TODAY'S STATS -->
+  <div style="padding:14px 0 4px;">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Today's Jobs</div>
+        <div class="stat-value stat-red">4</div>
+        <div class="stat-sub">Next at 9:00 AM</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Est. Earnings</div>
+        <div class="stat-value stat-green">$340</div>
+        <div class="stat-sub">+$95 vs last Tue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Miles Today</div>
+        <div class="stat-value">12.4</div>
+        <div class="stat-sub">3 stops left</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rating</div>
+        <div class="stat-value">4.9 ⭐</div>
+        <div class="stat-sub">Last 30 days</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEXT JOB -->
+  <div class="section-header">
+    <h2>Next Job</h2>
+    <a onclick="showScreen('jobs')">See all →</a>
+  </div>
+
+  <div class="card" style="border-color:rgba(250,77,91,0.4);background:linear-gradient(135deg,#1a0a0b,#111);" onclick="showJobDetail()">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+      <div>
+        <div style="font-size:18px;font-weight:800;">9:00 AM</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">In 42 minutes</div>
+      </div>
+      <span class="badge badge-amber">⏱ Upcoming</span>
+    </div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:4px;">619 S Vulcan Ave</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Encinitas, CA 92024 · 2,800 sqft</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+      <span class="badge badge-blue">📷 HD Photography</span>
+      <span class="badge badge-blue">🚁 Aerial</span>
+      <span class="badge badge-gray">⏱ 2h 30m</span>
+    </div>
+    <div class="divider"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button class="btn btn-primary" style="flex:2" onclick="handleStartJob(event)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
+        Start Job
+      </button>
+      <button class="btn btn-secondary" style="flex:1" onclick="handleNav(event)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        Maps
+      </button>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="section-header"><h2>Recent Activity</h2></div>
+  <div class="card">
+    <div class="notif-card">
+      <div class="notif-icon" style="background:var(--red-dim);">📋</div>
+      <div class="notif-text">
+        <div class="notif-title">New job assigned</div>
+        <div class="notif-body">3450 Del Mar Heights Rd — HD Photo + 3D Matterport at 2:00 PM</div>
+        <div class="notif-time">8 min ago</div>
+      </div>
+    </div>
+    <div class="notif-card">
+      <div class="notif-icon" style="background:rgba(34,197,94,0.15);">💰</div>
+      <div class="notif-text">
+        <div class="notif-title">Invoice #1042 paid</div>
+        <div class="notif-body">$620.00 deposited — May 25 period</div>
+        <div class="notif-time">2 hours ago</div>
+      </div>
+    </div>
+    <div class="notif-card">
+      <div class="notif-icon" style="background:rgba(245,158,11,0.15);">⭐</div>
+      <div class="notif-text">
+        <div class="notif-title">New review received</div>
+        <div class="notif-body">"Javier was on time, very professional. Listing photos look amazing!"</div>
+        <div class="notif-time">Yesterday</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEKLY EARNINGS -->
+  <div class="section-header"><h2>Weekly Earnings</h2></div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;">
+      <div>
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">This Week</div>
+        <div style="font-size:32px;font-weight:900;letter-spacing:-1px;color:var(--green);">$1,240</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:var(--text-muted);">Goal</div>
+        <div style="font-size:16px;font-weight:700;">$1,500</div>
+      </div>
+    </div>
+    <div class="earnings-bar-wrap">
+      <div class="earnings-bar-bg">
+        <div class="earnings-bar-fill" id="earningsBar" style="width:0%"></div>
+      </div>
+      <div class="earnings-bar-labels"><span>$0</span><span>$750</span><span>$1,500</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: JOBS ════════ -->
+<div class="screen" id="screen-jobs">
+  <div class="topbar">
+    <div style="font-size:20px;font-weight:800;">My Jobs</div>
+    <span class="badge badge-red">4 today</span>
+  </div>
+
+  <!-- Filter pills -->
+  <div style="display:flex;gap:8px;padding:12px 16px;overflow-x:auto;scrollbar-width:none;">
+    <div class="badge badge-red" style="padding:6px 14px;font-size:12px;white-space:nowrap;cursor:pointer;" id="filter-today" onclick="filterJobs('today')">Today</div>
+    <div class="badge badge-gray" style="padding:6px 14px;font-size:12px;white-space:nowrap;cursor:pointer;" id="filter-upcoming" onclick="filterJobs('upcoming')">Upcoming</div>
+    <div class="badge badge-gray" style="padding:6px 14px;font-size:12px;white-space:nowrap;cursor:pointer;" id="filter-completed" onclick="filterJobs('completed')">Completed</div>
+    <div class="badge badge-gray" style="padding:6px 14px;font-size:12px;white-space:nowrap;cursor:pointer;" id="filter-all" onclick="filterJobs('all')">All Jobs</div>
+  </div>
+
+  <!-- Date header -->
+  <div style="padding:4px 20px 6px;font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Tuesday, June 2 · 4 jobs</div>
+
+  <div id="jobs-today" style="background:var(--surface);border-radius:16px;margin:0 16px 12px;border:1px solid var(--border);overflow:hidden;">
+    <div class="job-row" onclick="showJobDetail()">
+      <div class="job-time-block">
+        <div class="job-time">9:00</div>
+        <div class="job-ampm">AM</div>
+      </div>
+      <div style="width:3px;height:36px;background:var(--amber);border-radius:2px;flex-shrink:0;"></div>
+      <div class="job-info">
+        <div class="job-address">619 S Vulcan Ave, Encinitas</div>
+        <div class="job-services">HD Photo · Aerial · 2h 30m</div>
+      </div>
+      <span class="badge badge-amber">Upcoming</span>
+    </div>
+    <div class="job-row" onclick="showJobDetail2()">
+      <div class="job-time-block">
+        <div class="job-time">12:00</div>
+        <div class="job-ampm">PM</div>
+      </div>
+      <div style="width:3px;height:36px;background:var(--blue);border-radius:2px;flex-shrink:0;"></div>
+      <div class="job-info">
+        <div class="job-address">3450 Del Mar Heights Rd</div>
+        <div class="job-services">HD Photo · 3D Matterport · 2h</div>
+      </div>
+      <span class="badge badge-blue">Assigned</span>
+    </div>
+    <div class="job-row" onclick="showJobDetail3()">
+      <div class="job-time-block">
+        <div class="job-time">3:00</div>
+        <div class="job-ampm">PM</div>
+      </div>
+      <div style="width:3px;height:36px;background:var(--amber);border-radius:2px;flex-shrink:0;"></div>
+      <div class="job-info">
+        <div class="job-address">1825 Sunset Cliffs Blvd</div>
+        <div class="job-services">Twilight Shoot · 1h</div>
+      </div>
+      <span class="badge badge-amber">Upcoming</span>
+    </div>
+    <div class="job-row">
+      <div class="job-time-block">
+        <div class="job-time">5:30</div>
+        <div class="job-ampm">PM</div>
+      </div>
+      <div style="width:3px;height:36px;background:var(--red);border-radius:2px;flex-shrink:0;"></div>
+      <div class="job-info">
+        <div class="job-address">7120 Estrella de Mar Rd</div>
+        <div class="job-services">HD Photo · Aerial Video · 2h</div>
+      </div>
+      <span class="badge badge-red">New</span>
+    </div>
+  </div>
+
+  <!-- Completed yesterday -->
+  <div style="padding:4px 20px 6px;font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Monday, June 1 · 3 completed</div>
+  <div style="background:var(--surface);border-radius:16px;margin:0 16px 12px;border:1px solid var(--border);overflow:hidden;" id="jobs-completed">
+    <div class="job-row">
+      <div class="job-time-block">
+        <div class="job-time">10:00</div>
+        <div class="job-ampm">AM</div>
+      </div>
+      <div style="width:3px;height:36px;background:var(--green);border-radius:2px;flex-shrink:0;"></div>
+      <div class="job-info">
+        <div class="job-address">4250 Rancho Santa Fe Rd</div>
+        <div class="job-services">HD Photo · Aerial · Video</div>
+      </div>
+      <span class="badge badge-green">Done</span>
+    </div>
+    <div class="job-row">
+      <div class="job-time-block">
+        <div class="job-time">1:30</div>
+        <div class="job-ampm">PM</div>
+      </div>
+      <div style="width:3px;height:36px;background:var(--green);border-radius:2px;flex-shrink:0;"></div>
+      <div class="job-info">
+        <div class="job-address">820 Fort Stockton Dr</div>
+        <div class="job-services">HD Photo · 3D Matterport</div>
+      </div>
+      <span class="badge badge-green">Done</span>
+    </div>
+    <div class="job-row">
+      <div class="job-time-block">
+        <div class="job-time">4:00</div>
+        <div class="job-ampm">PM</div>
+      </div>
+      <div style="width:3px;height:36px;background:var(--green);border-radius:2px;flex-shrink:0;"></div>
+      <div class="job-info">
+        <div class="job-address">2910 Shelter Island Dr</div>
+        <div class="job-services">HD Photo · Twilight</div>
+      </div>
+      <span class="badge badge-green">Done</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: JOB DETAIL ════════ -->
+<div class="screen" id="screen-detail">
+  <div class="topbar" style="padding-top:env(safe-area-inset-top,44px);">
+    <div class="detail-back" onclick="showScreen('jobs')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+      Jobs
+    </div>
+    <span class="badge badge-amber" id="detailStatusBadge">⏱ Upcoming</span>
+  </div>
+
+  <div class="detail-hero">
+    <div style="font-size:22px;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px;" id="detailAddress">619 S Vulcan Ave</div>
+    <div style="font-size:14px;color:var(--text-muted);margin-bottom:14px;">Encinitas, CA 92024 · 2,800 sqft</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <span class="badge badge-blue">📷 HD Photography</span>
+      <span class="badge badge-blue">🚁 Aerial</span>
+      <span class="badge badge-gray">⏱ 2h 30m</span>
+      <span class="badge badge-gray">9:00 AM</span>
+    </div>
+  </div>
+
+  <!-- Status flow -->
+  <div class="section-header"><h2>Job Status</h2></div>
+  <div class="card">
+    <div class="stepper" id="jobStepper">
+      <div class="step">
+        <div class="step-line done"></div>
+        <div class="step-dot done">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>
+        </div>
+        <div class="step-text">
+          <div class="step-title">Job Assigned</div>
+          <div class="step-time">Today · 7:45 AM</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-line done"></div>
+        <div class="step-dot done">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>
+        </div>
+        <div class="step-text">
+          <div class="step-title">Confirmed by You</div>
+          <div class="step-time">Today · 7:48 AM</div>
+        </div>
+      </div>
+      <div class="step" id="stepEnRoute">
+        <div class="step-line" id="enRouteLine"></div>
+        <div class="step-dot active" id="stepEnRouteDot">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="4" fill="white"/></svg>
+        </div>
+        <div class="step-text">
+          <div class="step-title">En Route</div>
+          <div class="step-time" id="enRouteTime">Tap "Start Job" to begin</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-line" id="arrivedLine"></div>
+        <div class="step-dot pending" id="stepArrivedDot"></div>
+        <div class="step-text">
+          <div class="step-title">Arrived at Property</div>
+          <div class="step-time" id="arrivedTime">Pending</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot pending" id="stepDoneDot"></div>
+        <div class="step-text">
+          <div class="step-title">Shoot Complete</div>
+          <div class="step-time" id="doneTime">Pending</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info -->
+  <div class="card">
+    <div class="info-row">
+      <div class="info-icon">👤</div>
+      <div>
+        <div class="info-label">Client</div>
+        <div class="info-value">Sarah Mitchell, Compass Realty</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">📞</div>
+      <div>
+        <div class="info-label">Phone</div>
+        <div class="info-value">(619) 555-0182</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">🔑</div>
+      <div>
+        <div class="info-label">Access</div>
+        <div class="info-value">Lockbox · Code #4471</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">📝</div>
+      <div>
+        <div class="info-label">Notes</div>
+        <div class="info-value">Back gate code 1234. Shoot backyard pool area.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div style="padding:0 16px 12px;display:flex;flex-direction:column;gap:10px;">
+    <button class="btn btn-primary" id="mainActionBtn" onclick="progressJob()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
+      Start Job
+    </button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button class="btn btn-secondary" onclick="handleNav(event)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        Navigate
+      </button>
+      <button class="btn btn-secondary" onclick="showToast('📞 Calling Sarah Mitchell...')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1A19.5 19.5 0 013.1 10.7 19.8 19.8 0 01.1 2.2 2 2 0 012.1 0h3a2 2 0 012 1.7c.1.8.4 1.7.7 2.5a2 2 0 01-.4 2.1L6.1 7.6a16 16 0 006.1 6.1l1.3-1.3a2 2 0 012.1-.4c.8.3 1.7.6 2.5.7A2 2 0 0122 16.9z"/></svg>
+        Call Client
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: ROUTE ════════ -->
+<div class="screen" id="screen-route">
+  <div class="topbar">
+    <div style="font-size:20px;font-weight:800;">Today's Route</div>
+    <span class="badge badge-green">Optimized ✓</span>
+  </div>
+
+  <!-- Fake map -->
+  <div class="map-placeholder">
+    <svg class="map-svg" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
+      <rect width="400" height="180" fill="#111"/>
+      <!-- Road grid -->
+      <line x1="0" y1="60" x2="400" y2="60" stroke="#222" stroke-width="8"/>
+      <line x1="0" y1="120" x2="400" y2="120" stroke="#222" stroke-width="8"/>
+      <line x1="80" y1="0" x2="80" y2="180" stroke="#222" stroke-width="6"/>
+      <line x1="180" y1="0" x2="180" y2="180" stroke="#222" stroke-width="6"/>
+      <line x1="300" y1="0" x2="300" y2="180" stroke="#222" stroke-width="6"/>
+      <!-- Route line -->
+      <polyline points="40,90 80,60 180,60 300,90 360,120" stroke="#FA4D5B" stroke-width="3" fill="none" stroke-dasharray="8,4" stroke-linecap="round"/>
+      <!-- Stop markers -->
+      <circle cx="40" cy="90" r="10" fill="#22c55e"/>
+      <text x="40" y="94" text-anchor="middle" font-size="10" fill="white" font-weight="bold">✓</text>
+      <circle cx="80" cy="60" r="10" fill="#FA4D5B"/>
+      <text x="80" y="64" text-anchor="middle" font-size="10" fill="white" font-weight="bold">1</text>
+      <circle cx="180" cy="60" r="10" fill="#333" stroke="#555" stroke-width="1"/>
+      <text x="180" y="64" text-anchor="middle" font-size="10" fill="white" font-weight="bold">2</text>
+      <circle cx="300" cy="90" r="10" fill="#333" stroke="#555" stroke-width="1"/>
+      <text x="300" y="94" text-anchor="middle" font-size="10" fill="white" font-weight="bold">3</text>
+      <circle cx="360" cy="120" r="10" fill="#333" stroke="#555" stroke-width="1"/>
+      <text x="360" y="124" text-anchor="middle" font-size="10" fill="white" font-weight="bold">4</text>
+      <!-- You are here -->
+      <circle cx="60" cy="80" r="7" fill="#FA4D5B" opacity="0.3"/>
+      <circle cx="60" cy="80" r="4" fill="#FA4D5B"/>
+    </svg>
+    <div style="position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,0.7);padding:4px 10px;border-radius:8px;font-size:11px;color:white;">San Diego, CA</div>
+  </div>
+
+  <!-- Route summary -->
+  <div class="stat-grid" style="padding:12px 16px 4px;">
+    <div class="stat-card">
+      <div class="stat-label">Total Distance</div>
+      <div class="stat-value">34.2 <span style="font-size:14px;font-weight:600;color:var(--text-muted);">mi</span></div>
+      <div class="stat-sub">Est. 58 min driving</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Time</div>
+      <div class="stat-value">8.5 <span style="font-size:14px;font-weight:600;color:var(--text-muted);">hrs</span></div>
+      <div class="stat-sub">Incl. shoot time</div>
+    </div>
+  </div>
+
+  <!-- Stop list -->
+  <div class="section-header"><h2>Stops</h2>
+    <a onclick="showToast('✅ Route already optimized!')">Re-optimize</a>
+  </div>
+
+  <div style="background:var(--surface);border-radius:16px;margin:0 16px 12px;border:1px solid var(--border);overflow:hidden;">
+    <div class="route-stop">
+      <div class="stop-num done">✓</div>
+      <div class="stop-info">
+        <div class="stop-address">🏠 Your Location (Start)</div>
+        <div class="stop-time">Departed 8:05 AM</div>
+      </div>
+      <div class="stop-dist" style="color:var(--green);">Done</div>
+    </div>
+    <div class="route-stop" onclick="showScreen('detail')">
+      <div class="stop-num current">1</div>
+      <div class="stop-info">
+        <div class="stop-address">619 S Vulcan Ave, Encinitas</div>
+        <div class="stop-time">9:00 AM · HD Photo + Aerial · 2h 30m</div>
+      </div>
+      <div class="stop-dist">3.2 mi</div>
+    </div>
+    <div class="route-stop">
+      <div class="stop-num upcoming">2</div>
+      <div class="stop-info">
+        <div class="stop-address">3450 Del Mar Heights Rd</div>
+        <div class="stop-time">12:00 PM · HD Photo + 3D · 2h</div>
+      </div>
+      <div class="stop-dist">8.7 mi</div>
+    </div>
+    <div class="route-stop">
+      <div class="stop-num upcoming">3</div>
+      <div class="stop-info">
+        <div class="stop-address">1825 Sunset Cliffs Blvd</div>
+        <div class="stop-time">3:00 PM · Twilight · 1h</div>
+      </div>
+      <div class="stop-dist">12.1 mi</div>
+    </div>
+    <div class="route-stop">
+      <div class="stop-num upcoming">4</div>
+      <div class="stop-info">
+        <div class="stop-address">7120 Estrella de Mar Rd</div>
+        <div class="stop-time">5:30 PM · HD Photo + Aerial Video · 2h</div>
+      </div>
+      <div class="stop-dist">10.2 mi</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: MILEAGE ════════ -->
+<div class="screen" id="screen-mileage">
+  <div class="topbar">
+    <div style="font-size:20px;font-weight:800;">Mileage</div>
+    <div id="trackingToggleBtn">
+      <div class="live-badge" id="liveIndicator" style="display:none;">
+        <div class="live-dot"></div> LIVE
+      </div>
+    </div>
+  </div>
+
+  <!-- Odometer -->
+  <div class="tracking-card">
+    <div class="tracking-header">
+      <div class="tracking-title">Current Trip</div>
+      <div class="live-badge" id="liveIndicator2">
+        <div class="live-dot"></div> TRACKING
+      </div>
+    </div>
+    <div class="odometer">
+      <div class="odo-label">Miles Tracked Today</div>
+      <div class="odo-value"><span id="mileCounter">12.4</span><span class="odo-unit"> mi</span></div>
+      <div class="odo-sub" id="trackingStatus">● Tracking active · Auto-started at 8:05 AM</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+      <div style="text-align:center;background:#0a0a0a;padding:12px;border-radius:10px;">
+        <div style="font-size:11px;color:var(--text-muted);">Driving Time</div>
+        <div style="font-size:20px;font-weight:800;margin-top:2px;">1h 12m</div>
+      </div>
+      <div style="text-align:center;background:#0a0a0a;padding:12px;border-radius:10px;">
+        <div style="font-size:11px;color:var(--text-muted);">Est. Reimbursement</div>
+        <div style="font-size:20px;font-weight:800;color:var(--green);margin-top:2px;">$7.38</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trip log -->
+  <div class="section-header"><h2>Trip Segments</h2></div>
+  <div style="background:var(--surface);border-radius:16px;margin:0 16px 12px;border:1px solid var(--border);overflow:hidden;">
+    <div class="invoice-row">
+      <div class="invoice-left">
+        <div class="invoice-id">Segment 1</div>
+        <div class="invoice-desc">Home → 619 S Vulcan Ave</div>
+        <div class="invoice-date">8:05 AM · In progress</div>
+      </div>
+      <div class="invoice-right">
+        <div class="invoice-amount" style="color:var(--red);">3.2 mi</div>
+        <div style="font-size:11px;color:var(--text-muted);">$1.90</div>
+      </div>
+    </div>
+    <div class="invoice-row" style="opacity:0.5;">
+      <div class="invoice-left">
+        <div class="invoice-id">Segment 2</div>
+        <div class="invoice-desc">619 Vulcan → Del Mar Heights</div>
+        <div class="invoice-date">~11:30 AM · Upcoming</div>
+      </div>
+      <div class="invoice-right">
+        <div class="invoice-amount" style="color:var(--text-muted);">8.7 mi</div>
+        <div style="font-size:11px;color:var(--text-muted);">$5.17</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly mileage -->
+  <div class="section-header"><h2>This Week</h2></div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div>
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Total Miles</div>
+        <div style="font-size:28px;font-weight:900;letter-spacing:-1px;">67.8 mi</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:var(--text-muted);">Reimbursement</div>
+        <div style="font-size:20px;font-weight:800;color:var(--green);">$40.30</div>
+      </div>
+    </div>
+    <!-- Mini bar chart -->
+    <div style="display:flex;align-items:flex-end;gap:6px;height:50px;">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+        <div style="background:var(--border);border-radius:3px;width:100%;height:30px;"></div>
+        <div style="font-size:9px;color:var(--text-muted);">M</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+        <div style="background:var(--border);border-radius:3px;width:100%;height:45px;"></div>
+        <div style="font-size:9px;color:var(--text-muted);">T</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+        <div style="background:var(--red);border-radius:3px;width:100%;height:38px;position:relative;">
+          <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--red);white-space:nowrap;">Today</div>
+        </div>
+        <div style="font-size:9px;color:var(--text-muted);">W</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+        <div style="background:var(--border);border-radius:3px;width:100%;height:20px;opacity:0.3;"></div>
+        <div style="font-size:9px;color:var(--text-muted);">T</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+        <div style="background:var(--border);border-radius:3px;width:100%;height:20px;opacity:0.3;"></div>
+        <div style="font-size:9px;color:var(--text-muted);">F</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:0 16px 12px;">
+    <button class="btn btn-outline" onclick="showToast('📊 Mileage report exported to PDF')">
+      Export Weekly Report
+    </button>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: INVOICES ════════ -->
+<div class="screen" id="screen-invoices">
+  <div class="topbar">
+    <div style="font-size:20px;font-weight:800;">Invoices</div>
+    <span class="badge badge-green">$1,240 due</span>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="stat-grid" style="padding:12px 16px 4px;">
+    <div class="stat-card">
+      <div class="stat-label">Pending Payout</div>
+      <div class="stat-value stat-green">$1,240</div>
+      <div class="stat-sub">3 invoices</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">This Month</div>
+      <div class="stat-value">$2,480</div>
+      <div class="stat-sub">12 shoots</div>
+    </div>
+  </div>
+
+  <!-- Pending -->
+  <div class="section-header"><h2>Pending</h2></div>
+  <div style="background:var(--surface);border-radius:16px;margin:0 16px 12px;border:1px solid var(--border);overflow:hidden;">
+    <div class="invoice-row" onclick="showToast('📄 Invoice #1047 opened')">
+      <div class="invoice-left">
+        <div class="invoice-id">#1047</div>
+        <div class="invoice-desc">4 shoots · Jun 1-2</div>
+        <div class="invoice-date">Due Jun 7 · San Diego</div>
+      </div>
+      <div class="invoice-right">
+        <div class="invoice-amount">$480</div>
+        <span class="badge badge-amber" style="margin-top:4px;">Pending</span>
+      </div>
+    </div>
+    <div class="invoice-row" onclick="showToast('📄 Invoice #1046 opened')">
+      <div class="invoice-left">
+        <div class="invoice-id">#1046</div>
+        <div class="invoice-desc">5 shoots · May 26-30</div>
+        <div class="invoice-date">Due Jun 5 · San Diego</div>
+      </div>
+      <div class="invoice-right">
+        <div class="invoice-amount">$620</div>
+        <span class="badge badge-amber" style="margin-top:4px;">Pending</span>
+      </div>
+    </div>
+    <div class="invoice-row" onclick="showToast('📄 Invoice #1045 opened')">
+      <div class="invoice-left">
+        <div class="invoice-id">#1045</div>
+        <div class="invoice-desc">3 shoots · May 22-24</div>
+        <div class="invoice-date">Due Jun 3 · Encinitas</div>
+      </div>
+      <div class="invoice-right">
+        <div class="invoice-amount">$140</div>
+        <span class="badge badge-amber" style="margin-top:4px;">Pending</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paid -->
+  <div class="section-header"><h2>Paid</h2></div>
+  <div style="background:var(--surface);border-radius:16px;margin:0 16px 12px;border:1px solid var(--border);overflow:hidden;">
+    <div class="invoice-row" onclick="showToast('✅ Invoice #1044 — $580 paid May 25')">
+      <div class="invoice-left">
+        <div class="invoice-id">#1044</div>
+        <div class="invoice-desc">6 shoots · May 15-20</div>
+        <div class="invoice-date">Paid May 25</div>
+      </div>
+      <div class="invoice-right">
+        <div class="invoice-amount green">$580</div>
+        <span class="badge badge-green" style="margin-top:4px;">Paid</span>
+      </div>
+    </div>
+    <div class="invoice-row" onclick="showToast('✅ Invoice #1043 — $740 paid May 12')">
+      <div class="invoice-left">
+        <div class="invoice-id">#1043</div>
+        <div class="invoice-desc">8 shoots · May 1-10</div>
+        <div class="invoice-date">Paid May 12</div>
+      </div>
+      <div class="invoice-right">
+        <div class="invoice-amount green">$740</div>
+        <span class="badge badge-green" style="margin-top:4px;">Paid</span>
+      </div>
+    </div>
+    <div class="invoice-row" onclick="showToast('✅ Invoice #1042 — $620 paid Apr 28')">
+      <div class="invoice-left">
+        <div class="invoice-id">#1042</div>
+        <div class="invoice-desc">7 shoots · Apr 20-28</div>
+        <div class="invoice-date">Paid Apr 28</div>
+      </div>
+      <div class="invoice-right">
+        <div class="invoice-amount green">$620</div>
+        <span class="badge badge-green" style="margin-top:4px;">Paid</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ BOTTOM NAV ════════ -->
+<nav class="bottom-nav">
+  <div class="nav-item active" id="nav-home" onclick="showScreen('home')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FA4D5B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/>
+    </svg>
+    <span>Home</span>
+  </div>
+  <div class="nav-item" id="nav-jobs" onclick="showScreen('jobs')">
+    <div class="nav-badge">4</div>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+    </svg>
+    <span>Jobs</span>
+  </div>
+  <div class="nav-item" id="nav-route" onclick="showScreen('route')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="10" r="3"/><path d="M12 2C8.1 2 5 5.1 5 10c0 5.2 7 12 7 12s7-6.8 7-12c0-4.9-3.1-8-7-8z"/>
+    </svg>
+    <span>Route</span>
+  </div>
+  <div class="nav-item" id="nav-mileage" onclick="showScreen('mileage')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/>
+    </svg>
+    <span>Mileage</span>
+  </div>
+  <div class="nav-item" id="nav-invoices" onclick="showScreen('invoices')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+    </svg>
+    <span>Pay</span>
+  </div>
+</nav>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+let jobStage = 0; // 0=not started, 1=en route, 2=arrived, 3=done
+const jobActions = [
+  { label: 'Start Job', icon: '▶', next: 'En Route → 619 S Vulcan Ave' },
+  { label: 'Mark Arrived', icon: '📍', next: null },
+  { label: 'Complete Shoot', icon: '✅', next: null },
+];
+
+// ── NAVIGATION ──
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.opacity = '0';
+  });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-item svg').forEach(s => { s.style.stroke = '#666'; });
+  document.querySelectorAll('.nav-item span').forEach(s => { s.style.color = ''; });
+
+  const screen = document.getElementById('screen-' + name);
+  const nav = document.getElementById('nav-' + name);
+  if (screen) {
+    screen.classList.add('active');
+    requestAnimationFrame(() => { screen.style.opacity = '1'; });
+    screen.scrollTop = 0;
+  }
+  if (nav) {
+    nav.classList.add('active');
+    nav.querySelector('svg').style.stroke = '#FA4D5B';
+    nav.querySelector('span').style.color = '#FA4D5B';
+  }
+}
+
+function showJobDetail() {
+  showScreen('detail');
+  document.getElementById('detailAddress').textContent = '619 S Vulcan Ave';
+  document.getElementById('detailStatusBadge').textContent = jobStage === 0 ? '⏱ Upcoming' : jobStage === 1 ? '🚗 En Route' : jobStage === 2 ? '📍 On Site' : '✅ Complete';
+  updateJobBtn();
+}
+
+function showJobDetail2() {
+  showScreen('detail');
+  document.getElementById('detailAddress').textContent = '3450 Del Mar Heights Rd';
+  document.getElementById('detailStatusBadge').innerHTML = '<span class="badge badge-blue">Assigned</span>';
+}
+
+function showJobDetail3() {
+  showScreen('detail');
+  document.getElementById('detailAddress').textContent = '1825 Sunset Cliffs Blvd';
+  document.getElementById('detailStatusBadge').innerHTML = '<span class="badge badge-amber">⏱ Upcoming</span>';
+}
+
+// ── JOB PROGRESSION ──
+function progressJob() {
+  jobStage++;
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+  if (jobStage === 1) {
+    // En route
+    document.getElementById('enRouteDot') && null;
+    document.getElementById('stepEnRouteDot').className = 'step-dot done';
+    document.getElementById('stepEnRouteDot').innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>';
+    document.getElementById('enRouteLine').className = 'step-line done';
+    document.getElementById('enRouteTime').textContent = 'Today · ' + timeStr;
+    document.getElementById('stepArrivedDot').className = 'step-dot active';
+    document.getElementById('stepArrivedDot').innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="4" fill="white"/></svg>';
+    document.getElementById('arrivedTime').textContent = 'In progress...';
+    document.getElementById('detailStatusBadge').textContent = '🚗 En Route';
+    document.getElementById('detailStatusBadge').className = 'badge badge-blue';
+    showToast('🚗 Mileage tracking started!');
+  } else if (jobStage === 2) {
+    // Arrived
+    document.getElementById('stepArrivedDot').className = 'step-dot done';
+    document.getElementById('stepArrivedDot').innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>';
+    document.getElementById('arrivedLine').className = 'step-line done';
+    document.getElementById('arrivedTime').textContent = 'Today · ' + timeStr;
+    document.getElementById('stepDoneDot').className = 'step-dot active';
+    document.getElementById('stepDoneDot').innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="4" fill="white"/></svg>';
+    document.getElementById('doneTime').textContent = 'Shoot in progress...';
+    document.getElementById('detailStatusBadge').textContent = '📍 On Site';
+    document.getElementById('detailStatusBadge').className = 'badge badge-amber';
+    showToast('📍 Arrived! Mileage logged: 3.2 mi');
+  } else if (jobStage === 3) {
+    // Done
+    document.getElementById('stepDoneDot').className = 'step-dot done';
+    document.getElementById('stepDoneDot').innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>';
+    document.getElementById('doneTime').textContent = 'Today · ' + timeStr;
+    document.getElementById('detailStatusBadge').textContent = '✅ Complete';
+    document.getElementById('detailStatusBadge').className = 'badge badge-green';
+    showToast('🎉 Shoot complete! Invoice updated.');
+  }
+
+  updateJobBtn();
+}
+
+function updateJobBtn() {
+  const btn = document.getElementById('mainActionBtn');
+  if (!btn) return;
+  const labels = [
+    { text: 'Start Job', icon: '▶' },
+    { text: 'Mark Arrived', icon: '📍' },
+    { text: 'Complete Shoot', icon: '✅' },
+    { text: 'Job Complete ✓', icon: '' },
+  ];
+  const l = labels[Math.min(jobStage, 3)];
+  if (jobStage >= 3) {
+    btn.style.background = '#16a34a';
+    btn.disabled = true;
+  }
+  btn.innerHTML = `<span style="font-size:15px">${l.icon}</span> ${l.text}`;
+}
+
+function handleStartJob(e) {
+  e.stopPropagation();
+  showJobDetail();
+  setTimeout(() => progressJob(), 300);
+}
+
+function handleNav(e) {
+  e.stopPropagation();
+  showToast('🗺 Opening in Maps...');
+}
+
+// ── FILTERS ──
+function filterJobs(type) {
+  ['today','upcoming','completed','all'].forEach(f => {
+    const el = document.getElementById('filter-' + f);
+    if (el) el.className = 'badge badge-gray';
+  });
+  const active = document.getElementById('filter-' + type);
+  if (active) active.className = 'badge badge-red';
+  showToast('Showing ' + type + ' jobs');
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── ODOMETER ANIMATION ──
+function animateMileCounter() {
+  const el = document.getElementById('mileCounter');
+  if (!el) return;
+  let val = 12.4;
+  setInterval(() => {
+    val += (Math.random() * 0.02);
+    el.textContent = val.toFixed(1);
+  }, 3000);
+}
+
+// ── EARNINGS BAR ──
+function animateEarningsBar() {
+  setTimeout(() => {
+    const bar = document.getElementById('earningsBar');
+    if (bar) bar.style.width = '82.7%';
+  }, 500);
+}
+
+// ── INIT ──
+animateMileCounter();
+animateEarningsBar();
+showScreen('home');
+</script>
+</body>
+</html>
