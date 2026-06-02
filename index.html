@@ -63,10 +63,7 @@
     background: rgba(255,255,255,0.9);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    padding-top: max(env(safe-area-inset-top), 44px);
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 18px;
+    padding: calc(env(safe-area-inset-top, 0px) + 12px) 20px 14px;
     z-index: 50;
     display: flex;
     align-items: center;
@@ -132,7 +129,7 @@
     -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid var(--border);
     display: flex;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
     z-index: 100;
   }
 
@@ -1206,37 +1203,46 @@
   <!-- Pending -->
   <div class="section-header"><h2>Pending</h2></div>
   <div style="background:var(--surface);border-radius:16px;margin:0 16px 12px;border:1px solid var(--border);overflow:hidden;">
-    <div class="invoice-row" onclick="showToast('📄 Invoice #1047 opened')">
+    <div class="invoice-row">
       <div class="invoice-left">
         <div class="invoice-id">#1047</div>
         <div class="invoice-desc">4 shoots · Jun 1-2</div>
         <div class="invoice-date">Due Jun 7 · San Diego</div>
       </div>
-      <div class="invoice-right">
+      <div class="invoice-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <div class="invoice-amount">$480</div>
-        <span class="badge badge-amber" style="margin-top:4px;">Pending</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="badge badge-amber">Pending</span>
+          <button onclick="openInvoice('1047','Jun 1-2','4','$480','Pending')" style="background:var(--red);color:white;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">View</button>
+        </div>
       </div>
     </div>
-    <div class="invoice-row" onclick="showToast('📄 Invoice #1046 opened')">
+    <div class="invoice-row">
       <div class="invoice-left">
         <div class="invoice-id">#1046</div>
         <div class="invoice-desc">5 shoots · May 26-30</div>
         <div class="invoice-date">Due Jun 5 · San Diego</div>
       </div>
-      <div class="invoice-right">
+      <div class="invoice-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <div class="invoice-amount">$620</div>
-        <span class="badge badge-amber" style="margin-top:4px;">Pending</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="badge badge-amber">Pending</span>
+          <button onclick="openInvoice('1046','May 26-30','5','$620','Pending')" style="background:var(--red);color:white;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">View</button>
+        </div>
       </div>
     </div>
-    <div class="invoice-row" onclick="showToast('📄 Invoice #1045 opened')">
+    <div class="invoice-row">
       <div class="invoice-left">
         <div class="invoice-id">#1045</div>
         <div class="invoice-desc">3 shoots · May 22-24</div>
         <div class="invoice-date">Due Jun 3 · Encinitas</div>
       </div>
-      <div class="invoice-right">
+      <div class="invoice-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <div class="invoice-amount">$140</div>
-        <span class="badge badge-amber" style="margin-top:4px;">Pending</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="badge badge-amber">Pending</span>
+          <button onclick="openInvoice('1045','May 22-24','3','$140','Pending')" style="background:var(--red);color:white;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">View</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1244,37 +1250,46 @@
   <!-- Paid -->
   <div class="section-header"><h2>Paid</h2></div>
   <div style="background:var(--surface);border-radius:16px;margin:0 16px 12px;border:1px solid var(--border);overflow:hidden;">
-    <div class="invoice-row" onclick="showToast('✅ Invoice #1044 — $580 paid May 25')">
+    <div class="invoice-row">
       <div class="invoice-left">
         <div class="invoice-id">#1044</div>
         <div class="invoice-desc">6 shoots · May 15-20</div>
         <div class="invoice-date">Paid May 25</div>
       </div>
-      <div class="invoice-right">
+      <div class="invoice-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <div class="invoice-amount green">$580</div>
-        <span class="badge badge-green" style="margin-top:4px;">Paid</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="badge badge-green">Paid</span>
+          <button onclick="openInvoice('1044','May 15-20','6','$580','Paid')" style="background:var(--red);color:white;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">View</button>
+        </div>
       </div>
     </div>
-    <div class="invoice-row" onclick="showToast('✅ Invoice #1043 — $740 paid May 12')">
+    <div class="invoice-row">
       <div class="invoice-left">
         <div class="invoice-id">#1043</div>
         <div class="invoice-desc">8 shoots · May 1-10</div>
         <div class="invoice-date">Paid May 12</div>
       </div>
-      <div class="invoice-right">
+      <div class="invoice-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <div class="invoice-amount green">$740</div>
-        <span class="badge badge-green" style="margin-top:4px;">Paid</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="badge badge-green">Paid</span>
+          <button onclick="openInvoice('1043','May 1-10','8','$740','Paid')" style="background:var(--red);color:white;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">View</button>
+        </div>
       </div>
     </div>
-    <div class="invoice-row" onclick="showToast('✅ Invoice #1042 — $620 paid Apr 28')">
+    <div class="invoice-row">
       <div class="invoice-left">
         <div class="invoice-id">#1042</div>
         <div class="invoice-desc">7 shoots · Apr 20-28</div>
         <div class="invoice-date">Paid Apr 28</div>
       </div>
-      <div class="invoice-right">
+      <div class="invoice-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <div class="invoice-amount green">$620</div>
-        <span class="badge badge-green" style="margin-top:4px;">Paid</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="badge badge-green">Paid</span>
+          <button onclick="openInvoice('1042','Apr 20-28','7','$620','Paid')" style="background:var(--red);color:white;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">View</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1490,6 +1505,88 @@ function animateEarningsBar() {
     const bar = document.getElementById('earningsBar');
     if (bar) bar.style.width = '82.7%';
   }, 500);
+}
+
+// ── INVOICE VIEWER ──
+function openInvoice(num, period, shoots, amount, status) {
+  const statusColor = status === 'Paid' ? '#16a34a' : '#d97706';
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Invoice #${num} — Curb360</title>
+  <style>
+    body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;margin:0;padding:24px;color:#111;background:#f9f9f9;}
+    .page{max-width:600px;margin:0 auto;background:white;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,0.08);}
+    .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid #f0f0f0;}
+    .logo{font-size:22px;font-weight:900;letter-spacing:-0.5px;}
+    .logo span{color:#FA4D5B;}
+    .inv-meta{text-align:right;}
+    .inv-num{font-size:20px;font-weight:800;}
+    .inv-date{font-size:13px;color:#888;margin-top:4px;}
+    .status-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:${status==='Paid'?'#dcfce7':'#fef3c7'};color:${statusColor};margin-top:8px;}
+    .section{margin-bottom:24px;}
+    .section-title{font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:#888;font-weight:700;margin-bottom:12px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .info-item label{font-size:11px;color:#888;display:block;margin-bottom:2px;}
+    .info-item span{font-size:14px;font-weight:600;}
+    table{width:100%;border-collapse:collapse;margin-top:8px;}
+    th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:#888;padding:8px 0;border-bottom:1px solid #eee;}
+    td{padding:12px 0;border-bottom:1px solid #f5f5f5;font-size:14px;}
+    td:last-child,th:last-child{text-align:right;}
+    .total-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-top:2px solid #111;margin-top:8px;}
+    .total-label{font-size:16px;font-weight:700;}
+    .total-amount{font-size:24px;font-weight:900;color:#FA4D5B;}
+    .footer{margin-top:32px;padding-top:20px;border-top:1px solid #f0f0f0;font-size:12px;color:#aaa;text-align:center;}
+    @media print{body{background:white;padding:0;}.page{box-shadow:none;border-radius:0;}}
+  </style></head><body>
+  <div class="page">
+    <div class="header">
+      <div>
+        <div class="logo">CURB<span>360</span></div>
+        <div style="font-size:12px;color:#888;margin-top:4px;">curb360.com · San Diego, CA</div>
+      </div>
+      <div class="inv-meta">
+        <div class="inv-num">Invoice #${num}</div>
+        <div class="inv-date">Period: ${period}</div>
+        <div class="status-badge">${status}</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Contractor</div>
+      <div class="info-grid">
+        <div class="info-item"><label>Name</label><span>Javier Vega</span></div>
+        <div class="info-item"><label>ID</label><span>PROV-0042</span></div>
+        <div class="info-item"><label>Zone</label><span>San Diego, CA</span></div>
+        <div class="info-item"><label>Rating</label><span>4.9 ⭐</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Line Items — ${shoots} Shoots</div>
+      <table>
+        <tr><th>Service</th><th>Address</th><th>Amount</th></tr>
+        <tr><td>HD Photography</td><td>619 S Vulcan Ave</td><td>$120</td></tr>
+        <tr><td>Aerial Photography</td><td>619 S Vulcan Ave</td><td>$85</td></tr>
+        <tr><td>HD Photography</td><td>3450 Del Mar Heights</td><td>$120</td></tr>
+        <tr><td>3D Matterport</td><td>3450 Del Mar Heights</td><td>$95</td></tr>
+        <tr><td>Mileage Reimbursement</td><td>34.2 mi @ $0.67/mi</td><td>$22.91</td></tr>
+      </table>
+      <div class="total-row">
+        <div class="total-label">Total Due</div>
+        <div class="total-amount">${amount}</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Curb360 Media · payments@curb360.com · Net 7 terms<br>
+      Thank you for your work, Javier!
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:16px;">
+    <button onclick="window.print()" style="background:#FA4D5B;color:white;border:none;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">🖨 Print / Save PDF</button>
+  </div>
+  </body></html>`;
+  const blob = new Blob([html], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
 }
 
 // ── ROUTE DATA ──
