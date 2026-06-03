@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Curb360">
 <meta name="theme-color" content="#ffffff">
-<title>Curb360 — Photographer</title>
+<title>Curb360</title>
 
 <!-- PWA Manifest inline -->
 <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Curb360%20Photographer%22%2C%22short_name%22%3A%22Curb360%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23000000%22%2C%22theme_color%22%3A%22%23FA4D5B%22%2C%22start_url%22%3A%22.%22%7D">
@@ -595,6 +595,54 @@
 </style>
 </head>
 <body>
+
+
+<!-- ════════ SCREEN: LOGIN ════════ -->
+<div class="screen active" id="screen-login" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f5f5f7;padding:32px 24px;">
+  <div style="width:100%;max-width:340px;display:flex;flex-direction:column;align-items:center;gap:0;">
+
+    <!-- LOGO -->
+    <svg width="52" height="52" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:14px;">
+      <rect width="40" height="40" rx="10" fill="#FA4D5B"/>
+      <path d="M8 15.5C8 14.4 8.9 13.5 10 13.5H14L16 10.5H24L26 13.5H30C31.1 13.5 32 14.4 32 15.5V28.5C32 29.6 31.1 30.5 30 30.5H10C8.9 30.5 8 29.6 8 28.5V15.5Z" stroke="white" stroke-width="1.8" fill="none"/>
+      <path d="M20 25.5C22.8 25.5 25 23.3 25 20.5C25 17.7 22.8 15.5 20 15.5C17.2 15.5 15 17.7 15 20.5C15 23.3 17.2 25.5 20 25.5Z" stroke="white" stroke-width="1.8" fill="none"/>
+    </svg>
+
+    <div style="font-size:22px;font-weight:900;letter-spacing:-0.5px;color:#111;margin-bottom:4px;">Curb360</div>
+    <div style="font-size:13px;color:#888;margin-bottom:36px;">Sign in to continue</div>
+
+    <!-- FORM -->
+    <div style="width:100%;display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px;letter-spacing:0.3px;">EMAIL</div>
+        <input id="login-email" type="email" placeholder="your@email.com"
+          style="width:100%;background:white;border:1.5px solid #e0e0e0;border-radius:12px;padding:14px 16px;font-size:15px;color:#111;outline:none;font-family:inherit;"
+          onfocus="this.style.borderColor='#FA4D5B'" onblur="this.style.borderColor='#e0e0e0'">
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px;letter-spacing:0.3px;">PASSWORD</div>
+        <input id="login-password" type="password" placeholder="••••••••"
+          style="width:100%;background:white;border:1.5px solid #e0e0e0;border-radius:12px;padding:14px 16px;font-size:15px;color:#111;outline:none;font-family:inherit;"
+          onfocus="this.style.borderColor='#FA4D5B'" onblur="this.style.borderColor='#e0e0e0'"
+          onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+
+      <div id="login-error" style="display:none;font-size:12px;color:#FA4D5B;font-weight:600;text-align:center;padding:4px 0;">
+        Enter an email containing "client" or "provider"
+      </div>
+
+      <button onclick="doLogin()"
+        style="width:100%;background:#FA4D5B;color:white;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;font-family:inherit;transition:opacity 0.15s;"
+        onmousedown="this.style.opacity='0.85'" onmouseup="this.style.opacity='1'">
+        Sign In
+      </button>
+    </div>
+
+    <div style="font-size:11px;color:#bbb;margin-top:28px;text-align:center;line-height:1.6;">
+      Demo: use <strong style="color:#888;">abdel.client</strong> or <strong style="color:#888;">abdel.provider</strong>
+    </div>
+  </div>
+</div>
 
 <!-- ════════ SCREEN: DASHBOARD ════════ -->
 <div class="screen active" id="screen-home">
@@ -1296,7 +1344,7 @@
 </div>
 
 <!-- ════════ BOTTOM NAV ════════ -->
-<nav class="bottom-nav">
+<nav class="bottom-nav" id="bottom-nav">
   <div class="nav-item active" id="nav-home" onclick="showScreen('home')">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FA4D5B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/>
@@ -1327,6 +1375,412 @@
       <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
     </svg>
     <span>Pay</span>
+  </div>
+</nav>
+
+
+<!-- ════════════════════════════════════════ -->
+<!-- CLIENT SCREENS -->
+<!-- ════════════════════════════════════════ -->
+
+<!-- CLIENT HOME -->
+<div class="screen" id="screen-client-home">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#FA4D5B"/>
+        <path d="M8 15.5C8 14.4 8.9 13.5 10 13.5H14L16 10.5H24L26 13.5H30C31.1 13.5 32 14.4 32 15.5V28.5C32 29.6 31.1 30.5 30 30.5H10C8.9 30.5 8 29.6 8 28.5V15.5Z" stroke="white" stroke-width="1.8" fill="none"/>
+        <path d="M20 25.5C22.8 25.5 25 23.3 25 20.5C25 17.7 22.8 15.5 20 15.5C17.2 15.5 15 17.7 15 20.5C15 23.3 17.2 25.5 20 25.5Z" stroke="white" stroke-width="1.8" fill="none"/>
+      </svg>
+      <div>
+        <div style="font-size:10px;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase">CURB360</div>
+        <div style="font-size:15px;font-weight:800;line-height:1;margin-top:1px">Client</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="avatar" style="background:#3b82f6;">SM</div>
+    </div>
+  </div>
+
+  <div style="padding:18px 20px 0;">
+    <div style="font-size:13px;color:var(--text-muted);">Good morning,</div>
+    <div style="font-size:26px;font-weight:900;letter-spacing:-0.5px;margin-top:2px;">Sarah 👋</div>
+  </div>
+
+  <!-- STATS -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px 4px;">
+    <div class="stat-card">
+      <div class="stat-label">Active Orders</div>
+      <div class="stat-value" style="color:#3b82f6;">2</div>
+      <div class="stat-sub">In progress</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">This Month</div>
+      <div class="stat-value">$860</div>
+      <div class="stat-sub">4 shoots</div>
+    </div>
+  </div>
+
+  <!-- ACTIVE ORDER -->
+  <div class="section-header"><h2>Active Order</h2></div>
+  <div class="card" style="border-color:rgba(59,130,246,0.35);background:linear-gradient(135deg,#f0f5ff,#fff);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div style="font-size:16px;font-weight:800;">619 S Vulcan Ave</div>
+      <span class="badge badge-blue">🚗 En Route</span>
+    </div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Encinitas, CA · HD Photo + Aerial · Today 9:00 AM</div>
+    <div style="background:#f0f5ff;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <div style="width:36px;height:36px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;">JV</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;">Javier Vega</div>
+        <div style="font-size:11px;color:var(--text-muted);">Your photographer · ⭐ 4.9</div>
+      </div>
+      <div style="margin-left:auto;">
+        <div style="font-size:11px;color:#3b82f6;font-weight:700;">Arriving in ~8 min</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="showClientScreen('client-track')" style="padding:11px;">
+      📍 Track Live
+    </button>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="section-header"><h2>Quick Actions</h2></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 12px;">
+    <button class="btn btn-primary" onclick="showClientScreen('client-order')" style="padding:14px;font-size:14px;">
+      📷 Book a Shoot
+    </button>
+    <button class="btn btn-secondary" onclick="showClientScreen('client-photos')" style="padding:14px;font-size:14px;">
+      🖼 My Photos
+    </button>
+  </div>
+
+  <!-- RECENT -->
+  <div class="section-header"><h2>Recent Shoots</h2></div>
+  <div style="background:var(--surface);border-radius:16px;margin:0 16px 12px;border:1px solid var(--border);overflow:hidden;">
+    <div class="job-row" onclick="showClientScreen('client-photos')">
+      <div style="width:44px;height:44px;border-radius:10px;background:#f0f5ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏠</div>
+      <div class="job-info">
+        <div class="job-address">820 Fort Stockton Dr</div>
+        <div class="job-services">HD Photo · 3D · Delivered May 31</div>
+      </div>
+      <span class="badge badge-green">View</span>
+    </div>
+    <div class="job-row" onclick="showClientScreen('client-photos')">
+      <div style="width:44px;height:44px;border-radius:10px;background:#f0f5ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏠</div>
+      <div class="job-info">
+        <div class="job-address">2910 Shelter Island Dr</div>
+        <div class="job-services">HD Photo · Twilight · Delivered May 28</div>
+      </div>
+      <span class="badge badge-green">View</span>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT ORDER -->
+<div class="screen" id="screen-client-order">
+  <div class="topbar">
+    <div class="detail-back" onclick="showClientScreen('client-home')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+      Back
+    </div>
+    <div style="font-size:17px;font-weight:800;">Book a Shoot</div>
+    <div style="width:40px;"></div>
+  </div>
+
+  <div style="padding:16px;">
+    <!-- STEP 1 -->
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Property Address</div>
+    <input type="text" placeholder="Enter property address..." value="3450 Del Mar Heights Rd, Del Mar CA"
+      style="width:100%;background:white;border:1.5px solid var(--border);border-radius:12px;padding:13px 16px;font-size:14px;color:#111;outline:none;font-family:inherit;margin-bottom:16px;">
+
+    <!-- SQFT -->
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Square Footage</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;">
+      <div style="border:1.5px solid #FA4D5B;border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:700;color:#FA4D5B;background:#fff0f1;">Under 2k</div>
+      <div style="border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);">2–3k</div>
+      <div style="border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);">3–4k</div>
+      <div style="border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);">4k+</div>
+    </div>
+
+    <!-- SERVICES -->
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Services</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+      <div style="background:white;border:1.5px solid #FA4D5B;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+        <div><div style="font-size:13px;font-weight:700;">📷 HD Photography</div><div style="font-size:11px;color:var(--text-muted);">60–90 min · from $120</div></div>
+        <div style="width:20px;height:20px;border-radius:50%;background:#FA4D5B;display:flex;align-items:center;justify-content:center;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>
+        </div>
+      </div>
+      <div style="background:white;border:1.5px solid #FA4D5B;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+        <div><div style="font-size:13px;font-weight:700;">🚁 Aerial Photography</div><div style="font-size:11px;color:var(--text-muted);">30 min · from $85</div></div>
+        <div style="width:20px;height:20px;border-radius:50%;background:#FA4D5B;display:flex;align-items:center;justify-content:center;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>
+        </div>
+      </div>
+      <div style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+        <div><div style="font-size:13px;font-weight:700;">🏠 3D Matterport</div><div style="font-size:11px;color:var(--text-muted);">60 min · from $95</div></div>
+        <div style="width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;"></div>
+      </div>
+    </div>
+
+    <!-- DATE -->
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Preferred Date & Time</div>
+    <input type="text" placeholder="Select date..." value="June 4, 2026 · 10:00 AM"
+      style="width:100%;background:white;border:1.5px solid var(--border);border-radius:12px;padding:13px 16px;font-size:14px;color:#111;outline:none;font-family:inherit;margin-bottom:16px;">
+
+    <!-- SUMMARY -->
+    <div style="background:#f5f5f7;border-radius:12px;padding:14px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:6px;"><span>HD Photography</span><span>$120</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:8px;"><span>Aerial Photography</span><span>$85</span></div>
+      <div style="height:1px;background:var(--border);margin-bottom:8px;"></div>
+      <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;"><span>Total</span><span style="color:#FA4D5B;">$205</span></div>
+    </div>
+
+    <button class="btn btn-primary" onclick="showToast('✅ Order placed! You will receive a confirmation shortly.');showClientScreen('client-home')">
+      Confirm & Pay $205
+    </button>
+  </div>
+</div>
+
+<!-- CLIENT TRACK -->
+<div class="screen" id="screen-client-track">
+  <div class="topbar">
+    <div class="detail-back" onclick="showClientScreen('client-home')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+      Back
+    </div>
+    <div style="font-size:17px;font-weight:800;">Track Order</div>
+    <div style="width:40px;"></div>
+  </div>
+
+  <!-- PROPERTY INFO -->
+  <div style="padding:16px 20px 12px;border-bottom:1px solid var(--border);">
+    <div style="font-size:18px;font-weight:800;">619 S Vulcan Ave</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-top:2px;">Encinitas, CA · HD Photo + Aerial · Today 9:00 AM</div>
+  </div>
+
+  <!-- MAP -->
+  <div style="margin:12px 16px;border-radius:14px;overflow:hidden;border:1px solid var(--border);height:180px;position:relative;cursor:pointer;" onclick="showToast('🗺 Opening in Google Maps...')">
+    <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&q=619+S+Vulcan+Ave,+Encinitas,+CA" style="width:100%;height:100%;border:none;pointer-events:none;" loading="lazy"></iframe>
+    <!-- PHOTOGRAPHER PIN -->
+    <div style="position:absolute;top:50%;left:45%;transform:translate(-50%,-50%);background:#FA4D5B;color:white;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 12px rgba(250,77,91,0.5);">JV</div>
+    <div style="position:absolute;bottom:10px;right:10px;background:white;border:1px solid #ddd;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;color:#3b82f6;">Open in Maps →</div>
+  </div>
+
+  <!-- PHOTOGRAPHER -->
+  <div style="margin:0 16px 12px;background:#f0f5ff;border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;">
+    <div style="width:48px;height:48px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;flex-shrink:0;">JV</div>
+    <div style="flex:1;">
+      <div style="font-size:15px;font-weight:800;">Javier Vega</div>
+      <div style="font-size:12px;color:var(--text-muted);">⭐ 4.9 · 6 years with Curb360</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:12px;font-weight:800;color:#3b82f6;">Arriving in</div>
+      <div style="font-size:20px;font-weight:900;color:#3b82f6;">~8 min</div>
+    </div>
+  </div>
+
+  <!-- STATUS STEPPER -->
+  <div class="card" style="margin:0 16px 12px;">
+    <div class="stepper">
+      <div class="step">
+        <div class="step-line done"></div>
+        <div class="step-dot done"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div>
+        <div class="step-text"><div class="step-title">Order Confirmed</div><div class="step-time">Today · 7:30 AM</div></div>
+      </div>
+      <div class="step">
+        <div class="step-line done"></div>
+        <div class="step-dot done"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div>
+        <div class="step-text"><div class="step-title">Photographer Assigned</div><div class="step-time">Javier Vega · Today · 7:45 AM</div></div>
+      </div>
+      <div class="step">
+        <div class="step-line" id="cl-enRoute-line"></div>
+        <div class="step-dot active"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="4" fill="white"/></svg></div>
+        <div class="step-text"><div class="step-title">En Route to Property</div><div class="step-time">Arriving in ~8 min</div></div>
+      </div>
+      <div class="step">
+        <div class="step-dot pending" id="cl-arrived-dot"></div>
+        <div class="step-text"><div class="step-title">Shoot Complete · Media Delivered</div><div class="step-time">Pending</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT PHOTOS -->
+<div class="screen" id="screen-client-photos">
+  <div class="topbar">
+    <div style="font-size:20px;font-weight:800;">My Photos</div>
+    <span class="badge badge-green">12 delivered</span>
+  </div>
+
+  <!-- STATS -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:12px 16px 4px;">
+    <div class="stat-card" style="text-align:center;">
+      <div class="stat-label">Properties</div>
+      <div class="stat-value">12</div>
+    </div>
+    <div class="stat-card" style="text-align:center;">
+      <div class="stat-label">Photos</div>
+      <div class="stat-value">284</div>
+    </div>
+    <div class="stat-card" style="text-align:center;">
+      <div class="stat-label">Videos</div>
+      <div class="stat-value">8</div>
+    </div>
+  </div>
+
+  <!-- PROPERTIES -->
+  <div class="section-header"><h2>Recent Deliveries</h2></div>
+  <div style="display:flex;flex-direction:column;gap:10px;padding:0 16px 12px;">
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+      <div style="background:linear-gradient(135deg,#e0e7ff,#dbeafe);height:100px;display:flex;align-items:center;justify-content:center;font-size:40px;">🏠</div>
+      <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:14px;font-weight:700;">619 S Vulcan Ave</div>
+          <div style="font-size:11px;color:var(--text-muted);">24 photos · 1 video · Jun 2</div>
+        </div>
+        <button onclick="showToast('📥 Downloading 24 photos...')" style="background:#FA4D5B;color:white;border:none;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;">Download</button>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+      <div style="background:linear-gradient(135deg,#dcfce7,#d1fae5);height:100px;display:flex;align-items:center;justify-content:center;font-size:40px;">🏡</div>
+      <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:14px;font-weight:700;">820 Fort Stockton Dr</div>
+          <div style="font-size:11px;color:var(--text-muted);">18 photos · 3D tour · May 31</div>
+        </div>
+        <button onclick="showToast('📥 Downloading 18 photos...')" style="background:#FA4D5B;color:white;border:none;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;">Download</button>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+      <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);height:100px;display:flex;align-items:center;justify-content:center;font-size:40px;">🏘</div>
+      <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:14px;font-weight:700;">2910 Shelter Island Dr</div>
+          <div style="font-size:11px;color:var(--text-muted);">22 photos · Twilight · May 28</div>
+        </div>
+        <button onclick="showToast('📥 Downloading 22 photos...')" style="background:#FA4D5B;color:white;border:none;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;">Download</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CLIENT INVOICES -->
+<div class="screen" id="screen-client-invoices">
+  <div class="topbar">
+    <div style="font-size:20px;font-weight:800;">Invoices</div>
+    <span class="badge badge-amber">$205 due</span>
+  </div>
+
+  <!-- STATS -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px 4px;">
+    <div class="stat-card">
+      <div class="stat-label">Outstanding</div>
+      <div class="stat-value" style="color:var(--amber);">$205</div>
+      <div class="stat-sub">1 invoice</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Paid This Month</div>
+      <div class="stat-value stat-green">$655</div>
+      <div class="stat-sub">3 shoots</div>
+    </div>
+  </div>
+
+  <!-- DUE -->
+  <div class="section-header"><h2>Due</h2></div>
+  <div style="background:var(--surface);border-radius:16px;margin:0 16px 12px;border:1px solid var(--border);overflow:hidden;">
+    <div class="invoice-row">
+      <div class="invoice-left">
+        <div class="invoice-id">#2047</div>
+        <div class="invoice-desc">619 S Vulcan Ave — HD Photo + Aerial</div>
+        <div class="invoice-date">Due Jun 9 · Today's shoot</div>
+      </div>
+      <div class="invoice-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="invoice-amount">$205</div>
+        <div style="display:flex;gap:6px;">
+          <span class="badge badge-amber">Due</span>
+          <button onclick="showToast('💳 Redirecting to payment...')" style="background:#FA4D5B;color:white;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;">Pay</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAID -->
+  <div class="section-header"><h2>Paid</h2></div>
+  <div style="background:var(--surface);border-radius:16px;margin:0 16px 12px;border:1px solid var(--border);overflow:hidden;">
+    <div class="invoice-row">
+      <div class="invoice-left">
+        <div class="invoice-id">#2046</div>
+        <div class="invoice-desc">820 Fort Stockton Dr — HD Photo + 3D</div>
+        <div class="invoice-date">Paid May 31</div>
+      </div>
+      <div class="invoice-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="invoice-amount green">$215</div>
+        <span class="badge badge-green">Paid</span>
+      </div>
+    </div>
+    <div class="invoice-row">
+      <div class="invoice-left">
+        <div class="invoice-id">#2045</div>
+        <div class="invoice-desc">2910 Shelter Island Dr — HD Photo + Twilight</div>
+        <div class="invoice-date">Paid May 28</div>
+      </div>
+      <div class="invoice-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="invoice-amount green">$230</div>
+        <span class="badge badge-green">Paid</span>
+      </div>
+    </div>
+    <div class="invoice-row">
+      <div class="invoice-left">
+        <div class="invoice-id">#2044</div>
+        <div class="invoice-desc">4250 Rancho Santa Fe Rd — Full Package</div>
+        <div class="invoice-date">Paid May 20</div>
+      </div>
+      <div class="invoice-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="invoice-amount green">$210</div>
+        <span class="badge badge-green">Paid</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════ CLIENT BOTTOM NAV ════════ -->
+<nav class="bottom-nav" id="client-nav" style="display:none;">
+  <div class="nav-item active" id="cnav-home" onclick="showClientScreen('client-home')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FA4D5B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/>
+    </svg>
+    <span>Home</span>
+  </div>
+  <div class="nav-item" id="cnav-order" onclick="showClientScreen('client-order')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+    </svg>
+    <span>Book</span>
+  </div>
+  <div class="nav-item" id="cnav-track" onclick="showClientScreen('client-track')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="10" r="3"/><path d="M12 2C8.1 2 5 5.1 5 10c0 5.2 7 12 7 12s7-6.8 7-12c0-4.9-3.1-8-7-8z"/>
+    </svg>
+    <span>Track</span>
+  </div>
+  <div class="nav-item" id="cnav-photos" onclick="showClientScreen('client-photos')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/>
+    </svg>
+    <span>Photos</span>
+  </div>
+  <div class="nav-item" id="cnav-invoices" onclick="showClientScreen('client-invoices')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+    </svg>
+    <span>Invoices</span>
   </div>
 </nav>
 
@@ -1676,10 +2130,89 @@ function openGoogleMaps() {
   window.open(data.mapsUrl, '_blank');
 }
 
+
+// ── LOGIN ──
+function doLogin() {
+  const email = document.getElementById('login-email').value.toLowerCase();
+  const err = document.getElementById('login-error');
+  if (email.includes('client')) {
+    err.style.display = 'none';
+    enterClientMode();
+  } else if (email.includes('provider')) {
+    err.style.display = 'none';
+    enterProviderMode();
+  } else {
+    err.style.display = 'block';
+  }
+}
+
+function enterProviderMode() {
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('bottom-nav').style.display = 'flex';
+  showScreen('home');
+}
+
+function enterClientMode() {
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('client-nav').style.display = 'flex';
+  showClientScreen('client-home');
+}
+
+// ── CLIENT NAVIGATION ──
+const clientScreens = ['client-home','client-order','client-track','client-photos','client-invoices'];
+const clientNavMap = {
+  'client-home': 'cnav-home',
+  'client-order': 'cnav-order',
+  'client-track': 'cnav-track',
+  'client-photos': 'cnav-photos',
+  'client-invoices': 'cnav-invoices'
+};
+
+function showClientScreen(name) {
+  // hide all screens
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.opacity = '0';
+  });
+
+  const s = document.getElementById('screen-' + name);
+  if (s) {
+    s.classList.add('active');
+    requestAnimationFrame(() => { s.style.opacity = '1'; });
+    s.scrollTop = 0;
+  }
+
+  // update client nav
+  document.querySelectorAll('#client-nav .nav-item').forEach(n => {
+    n.classList.remove('active');
+    const svg = n.querySelector('svg');
+    const span = n.querySelector('span');
+    if (svg) svg.style.stroke = '#666';
+    if (span) span.style.color = '';
+  });
+  const activeNav = document.getElementById(clientNavMap[name]);
+  if (activeNav) {
+    activeNav.classList.add('active');
+    const svg = activeNav.querySelector('svg');
+    const span = activeNav.querySelector('span');
+    if (svg) svg.style.stroke = '#FA4D5B';
+    if (span) span.style.color = '#FA4D5B';
+  }
+}
+
 // ── INIT ──
 animateMileCounter();
 animateEarningsBar();
-showScreen('home');
+// Start at login
+document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.opacity='0'; });
+const loginScreen = document.getElementById('screen-login');
+loginScreen.classList.add('active');
+loginScreen.style.opacity = '1';
+loginScreen.style.display = 'flex';
+document.getElementById('bottom-nav').style.display = 'none';
+document.getElementById('client-nav').style.display = 'none';
 switchRouteDay('jun2');
 </script>
 </body>
