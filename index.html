@@ -1080,17 +1080,42 @@
 
   <!-- Google Maps embed — clickable, opens in Google Maps -->
   <div style="margin:0 16px 12px;border-radius:16px;overflow:hidden;border:1px solid var(--border);height:220px;position:relative;cursor:pointer;" onclick="openGoogleMaps()">
-    <iframe id="routeMapFrame"
-      src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&origin=Encinitas,CA&destination=Carlsbad,CA&waypoints=Del+Mar+Heights+Rd,Del+Mar,CA|Sunset+Cliffs+Blvd,San+Diego,CA&mode=driving"
-      style="width:100%;height:100%;border:none;pointer-events:none;"
-      loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade">
-    </iframe>
+    <!-- Map background image -->
+    <img src="google maps.png" style="width:100%;height:100%;object-fit:cover;display:block;" alt="Map">
+
+    <!-- Route line overlay -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 400 220" preserveAspectRatio="none">
+      <polyline points="60,180 100,140 160,110 230,90 300,70 360,50" stroke="#FA4D5B" stroke-width="3" fill="none" stroke-dasharray="8,4" stroke-linecap="round" opacity="0.9"/>
+      <!-- Stop dots -->
+      <circle cx="100" cy="140" r="6" fill="white" stroke="#FA4D5B" stroke-width="2"/>
+      <circle cx="160" cy="110" r="6" fill="white" stroke="#FA4D5B" stroke-width="2"/>
+      <circle cx="230" cy="90" r="6" fill="white" stroke="#FA4D5B" stroke-width="2"/>
+      <circle cx="300" cy="70" r="6" fill="white" stroke="#FA4D5B" stroke-width="2"/>
+    </svg>
+
+    <!-- Photographer live location pin -->
+    <div style="position:absolute;top:38%;left:32%;transform:translate(-50%,-50%);">
+      <!-- Pulsing ring -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:rgba(250,77,91,0.2);animation:ping 1.5s infinite;"></div>
+      <!-- Pin -->
+      <div style="position:relative;background:#FA4D5B;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;border:2px solid white;box-shadow:0 2px 10px rgba(250,77,91,0.5);">JV</div>
+      <!-- Label -->
+      <div style="position:absolute;top:-28px;left:50%;transform:translateX(-50%);background:white;border:1px solid #eee;border-radius:8px;padding:3px 8px;font-size:10px;font-weight:700;color:#111;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.1);">Javier · En Route</div>
+    </div>
+
+    <!-- Open in maps button -->
     <div style="position:absolute;bottom:10px;right:10px;background:white;border:1px solid #ddd;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--red);display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       Open in Maps
     </div>
   </div>
+
+  <style>
+    @keyframes ping {
+      0% { transform: translate(-50%,-50%) scale(0.8); opacity: 0.8; }
+      100% { transform: translate(-50%,-50%) scale(2); opacity: 0; }
+    }
+  </style>
 
   <!-- Route summary -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 4px;">
@@ -1562,9 +1587,21 @@
 
   <!-- MAP -->
   <div style="margin:12px 16px;border-radius:14px;overflow:hidden;border:1px solid var(--border);height:180px;position:relative;cursor:pointer;" onclick="showToast('🗺 Opening in Google Maps...')">
-    <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&q=619+S+Vulcan+Ave,+Encinitas,+CA" style="width:100%;height:100%;border:none;pointer-events:none;" loading="lazy"></iframe>
-    <!-- PHOTOGRAPHER PIN -->
-    <div style="position:absolute;top:50%;left:45%;transform:translate(-50%,-50%);background:#FA4D5B;color:white;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 12px rgba(250,77,91,0.5);">JV</div>
+    <img src="google maps.png" style="width:100%;height:100%;object-fit:cover;display:block;" alt="Map">
+
+    <!-- Photographer live pin -->
+    <div style="position:absolute;top:45%;left:40%;transform:translate(-50%,-50%);">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:rgba(250,77,91,0.2);animation:ping 1.5s infinite;"></div>
+      <div style="position:relative;background:#FA4D5B;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;border:2px solid white;box-shadow:0 2px 10px rgba(250,77,91,0.5);">JV</div>
+      <div style="position:absolute;top:-28px;left:50%;transform:translateX(-50%);background:white;border:1px solid #eee;border-radius:8px;padding:3px 8px;font-size:10px;font-weight:700;color:#111;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.1);">Javier · ~8 min away</div>
+    </div>
+
+    <!-- Destination pin -->
+    <div style="position:absolute;top:30%;left:65%;transform:translate(-50%,-50%);">
+      <div style="background:#3b82f6;color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid white;box-shadow:0 2px 8px rgba(59,130,246,0.5);">🏠</div>
+      <div style="position:absolute;top:-24px;left:50%;transform:translateX(-50%);background:white;border:1px solid #eee;border-radius:6px;padding:2px 7px;font-size:9px;font-weight:700;color:#3b82f6;white-space:nowrap;">619 S Vulcan Ave</div>
+    </div>
+
     <div style="position:absolute;bottom:10px;right:10px;background:white;border:1px solid #ddd;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;color:#3b82f6;">Open in Maps →</div>
   </div>
 
